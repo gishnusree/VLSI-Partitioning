@@ -64,3 +64,22 @@ and the prefix of moves giving the maximum positive cumulative gain is applied b
 
 Overall, VLSI partitioning integrates graph- or hypergraph-based modeling, gain functions, cumulative gains, and constraints to iteratively optimize partitions while minimizing cuts, reducing delays, and maintaining balanced areas. KL provides a foundational method for balanced bipartitioning with node swaps, while FM extends it to single-cell moves, hypergraph structures, and area-based constraints, making it a versatile and practical solution for modern VLSI circuit design.
 
+# Clock Tree Synthesis (CTS)
+
+Clock Tree Synthesis (CTS) is a critical step in the VLSI physical design flow that comes after block placement and focuses on distributing the clock signal efficiently to all sequential elements in a synchronous digital system. The clock signal, often generated outside the chip, must reach every flip-flop and latch with precise timing to ensure correct synchronization, as the chip performance directly depends on the clock frequency. Routing the clock requires careful consideration of interconnect resistance ($R$), capacitance ($C$), noise, crosstalk, and the load presented by the number of flip-flops driven. As the chip size increases, interconnect capacitance dominates over gate capacitance, leading to RC delay, which scales approximately with the square of the scaling factor in advanced technology nodes. Simply widening the wire does not effectively reduce RC delay, so buffers are inserted to restore signal integrity and reduce transition times, though they add intrinsic delay, consume area, and increase power. Buffers can be used in centralized or distributed approaches, where the former uses a single large buffer with branching, and the latter uses multiple smaller buffers distributed along the clock tree.
+
+The interconnect delay of a clock tree can be approximated using the Elmore delay model, which assumes a single input node with capacitances to ground and no resistive loops. The delay to a node $i$ is calculated as:
+
+$$
+t_{d,i} = \sum_{k \in \text{nodes}} C_k \cdot R_{ik}
+$$
+
+where $R_{ik}$ is the shared path resistance from the source to nodes $i$ and $k$. For unbuffered trees, all capacitances in parallel are summed to compute the total node capacitance. In buffered trees, buffers isolate RC segments, reduce effective capacitance, improve slew, and add their own delay $D_b$, output resistance $R_b$, and input capacitance $C_b$.
+
+Another key metric is clock skew, the maximum difference in clock arrival time between any two sinks. For nodes $i$ and $j$, it is defined as:
+
+$$
+\text{Clock Skew} = \max \left| t_{s0 \rightarrow i} - t_{s0 \rightarrow j} \right|
+$$
+
+A balanced clock tree minimizes skew, ensuring all nodes receive the clock simultaneously, which improves circuit performance and allows higher operating frequencies. The main objectives of CTS are therefore to reduce clock skew and interconnect delay, enabling fast and reliable operation of high-performance chips.
